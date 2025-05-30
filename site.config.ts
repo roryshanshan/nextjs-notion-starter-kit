@@ -27,9 +27,7 @@ export default siteConfig({
   // open graph metadata (optional)
 
   // social usernames (optional)
-  twitter: 'transitive_bs',
-  github: 'transitive-bullshit',
-  linkedin: 'fisch2',
+
 
   // map of notion page IDs to URL paths (optional)
   pageUrlOverrides: null,
