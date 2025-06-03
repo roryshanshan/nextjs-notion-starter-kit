@@ -29,6 +29,7 @@ import { NotionPageHeader } from './NotionPageHeader'
 import { Page404 } from './Page404'
 import { PageAside } from './PageAside'
 import { PageHead } from './PageHead'
+import { Pdf } from './Pdf'
 import styles from './styles.module.css'
 
 // -----------------------------------------------------------------------------
@@ -83,12 +84,6 @@ const Collection = dynamic(() =>
 const Equation = dynamic(() =>
   import('react-notion-x/build/third-party/equation').then((m) => m.Equation)
 )
-const Pdf = dynamic(
-  () => import('react-notion-x/build/third-party/pdf').then((m) => m.Pdf),
-  {
-    ssr: false
-  }
-)
 const Modal = dynamic(
   () =>
     import('react-notion-x/build/third-party/modal').then((m) => {
@@ -116,9 +111,9 @@ const propertyLastEditedTimeValue = (
   defaultFn: () => React.ReactNode
 ) => {
   if (pageHeader && block?.last_edited_time) {
-    return Last updated ${formatDate(block?.last_edited_time, {
+    return `Last updated ${formatDate(block?.last_edited_time, {
       month: 'long'
-    })}
+    })}`
   }
 
   return defaultFn()
@@ -132,9 +127,9 @@ const propertyDateValue = (
     const publishDate = data?.[0]?.[1]?.[0]?.[1]?.start_date
 
     if (publishDate) {
-      return ${formatDate(publishDate, {
+      return `${formatDate(publishDate, {
         month: 'long'
-      })}
+      })}`
     }
   }
 
