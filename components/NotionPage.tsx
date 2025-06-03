@@ -1,28 +1,34 @@
-import { Pdf } from './Pdf'
-import cs from 'classnames'
+// ✅ React & Next 核心库
+import React from 'react'
+import { useRouter } from 'next/router'
 import dynamic from 'next/dynamic'
 import Image from 'next/legacy/image'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
-import { type PageBlock } from 'notion-types'
+
+// ✅ 外部工具库
+import cs from 'classnames'
 import { formatDate, getBlockTitle, getPageProperty } from 'notion-utils'
-import * as React from 'react'
-import BodyClassName from 'react-body-classname'
-import {
-  type NotionComponents,
-  NotionRenderer,
-  useNotionContext
-} from 'react-notion-x'
-import { EmbeddedTweet, TweetNotFound, TweetSkeleton } from 'react-tweet'
 import { useSearchParam } from 'react-use'
 
-import type * as types from '@/lib/types'
+// ✅ Notion 渲染
+import {
+  NotionRenderer,
+  useNotionContext,
+  type NotionComponents
+} from 'react-notion-x'
+
+// ✅ 第三方组件
+import { EmbeddedTweet, TweetNotFound, TweetSkeleton } from 'react-tweet'
+
+// ✅ 项目内工具方法
 import * as config from '@/lib/config'
+import type * as types from '@/lib/types'
 import { mapImageUrl } from '@/lib/map-image-url'
 import { getCanonicalPageUrl, mapPageUrl } from '@/lib/map-page-url'
 import { searchNotion } from '@/lib/search-notion'
 import { useDarkMode } from '@/lib/use-dark-mode'
 
+// ✅ 本地组件
 import { Footer } from './Footer'
 import { GitHubShareButton } from './GitHubShareButton'
 import { Loading } from './Loading'
@@ -30,6 +36,9 @@ import { NotionPageHeader } from './NotionPageHeader'
 import { Page404 } from './Page404'
 import { PageAside } from './PageAside'
 import { PageHead } from './PageHead'
+import { Pdf } from './Pdf'
+
+// ✅ 样式
 import styles from './styles.module.css'
 
 // -----------------------------------------------------------------------------
