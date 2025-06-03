@@ -89,12 +89,7 @@ const Collection = dynamic(() =>
 const Equation = dynamic(() =>
   import('react-notion-x/build/third-party/equation').then((m) => m.Equation)
 )
-const Pdf = dynamic(
-  () => import('react-notion-x/build/third-party/pdf').then((m) => m.Pdf),
-  {
-    ssr: false
-  }
-)
+import { Pdf } from './Pdf'
 const Modal = dynamic(
   () =>
     import('react-notion-x/build/third-party/modal').then((m) => {
