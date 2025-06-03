@@ -38,6 +38,9 @@ import { PageAside } from './PageAside'
 import { PageHead } from './PageHead'
 import { Pdf } from './Pdf'
 
+// ✅ 类型补充（解决 PageBlock 报错）
+import { PageBlock } from 'notion-types'
+
 // ✅ 样式
 import styles from './styles.module.css'
 
@@ -47,7 +50,6 @@ import styles from './styles.module.css'
 
 const Code = dynamic(() =>
   import('react-notion-x/build/third-party/code').then(async (m) => {
-    // add / remove any prism syntaxes here
     await Promise.allSettled([
       import('prismjs/components/prism-markup-templating.js'),
       import('prismjs/components/prism-markup.js'),
@@ -86,23 +88,17 @@ const Code = dynamic(() =>
 )
 
 const Collection = dynamic(() =>
-  import('react-notion-x/build/third-party/collection').then(
-    (m) => m.Collection
-  )
+  import('react-notion-x/build/third-party/collection').then((m) => m.Collection)
 )
 const Equation = dynamic(() =>
   import('react-notion-x/build/third-party/equation').then((m) => m.Equation)
 )
-
-const Modal = dynamic(
-  () =>
-    import('react-notion-x/build/third-party/modal').then((m) => {
-      m.Modal.setAppElement('.notion-viewport')
-      return m.Modal
-    }),
-  {
-    ssr: false
-  }
+const Modal = dynamic(() =>
+  import('react-notion-x/build/third-party/modal').then((m) => {
+    m.Modal.setAppElement('.notion-viewport')
+    return m.Modal
+  }),
+  { ssr: false }
 )
 
 function Tweet({ id }: { id: string }) {
@@ -125,7 +121,6 @@ const propertyLastEditedTimeValue = (
       month: 'long'
     })}`
   }
-
   return defaultFn()
 }
 
@@ -135,14 +130,12 @@ const propertyDateValue = (
 ) => {
   if (pageHeader && schema?.name?.toLowerCase() === 'published') {
     const publishDate = data?.[0]?.[1]?.[0]?.[1]?.start_date
-
     if (publishDate) {
       return `${formatDate(publishDate, {
         month: 'long'
       })}`
     }
   }
-
   return defaultFn()
 }
 
@@ -153,7 +146,6 @@ const propertyTextValue = (
   if (pageHeader && schema?.name?.toLowerCase() === 'author') {
     return <b>{defaultFn()}</b>
   }
-
   return defaultFn()
 }
 
@@ -184,26 +176,18 @@ export function NotionPage({
     []
   )
 
-  // lite mode is for oembed
   const isLiteMode = lite === 'true'
-
   const { isDarkMode } = useDarkMode()
 
   const siteMapPageUrl = React.useMemo(() => {
     const params: any = {}
     if (lite) params.lite = lite
-
-    const searchParams = new URLSearchParams(params)
-    return mapPageUrl(site, recordMap, searchParams)
+    return mapPageUrl(site, recordMap, new URLSearchParams(params))
   }, [site, recordMap, lite])
 
   const keys = Object.keys(recordMap?.block || {})
   const block = recordMap?.block?.[keys[0]]?.value
-
-  // const isRootPage =
-  //   parsePageId(block?.id) === parsePageId(site?.rootNotionPageId)
-  const isBlogPost =
-    block?.type === 'page' && block?.parent_table === 'collection'
+  const isBlogPost = block?.type === 'page' && block?.parent_table === 'collection'
 
   const showTableOfContents = !!isBlogPost
   const minTableOfContentsItems = 3
@@ -217,45 +201,19 @@ export function NotionPage({
 
   const footer = React.useMemo(() => <Footer />, [])
 
-  if (router.isFallback) {
-    return <Loading />
-  }
-
-  if (error || !site || !block) {
-    return <Page404 site={site} pageId={pageId} error={error} />
-  }
+  if (router.isFallback) return <Loading />
+  if (error || !site || !block) return <Page404 site={site} pageId={pageId} error={error} />
 
   const title = getBlockTitle(block, recordMap) || site.name
-
-  console.log('notion page', {
-    isDev: config.isDev,
-    title,
-    pageId,
-    rootNotionPageId: site.rootNotionPageId,
-    recordMap
-  })
-
-  if (!config.isServer) {
-    // add important objects to the window global for easy debugging
-    const g = window as any
-    g.pageId = pageId
-    g.recordMap = recordMap
-    g.block = block
-  }
-
-  const canonicalPageUrl =
-    !config.isDev && getCanonicalPageUrl(site, recordMap)(pageId)
-
+  const canonicalPageUrl = !config.isDev && getCanonicalPageUrl(site, recordMap)(pageId)
   const socialImage = mapImageUrl(
     getPageProperty<string>('Social Image', block, recordMap) ||
       (block as PageBlock).format?.page_cover ||
       config.defaultPageCover,
     block
   )
-
   const socialDescription =
-    getPageProperty<string>('Description', block, recordMap) ||
-    config.description
+    getPageProperty<string>('Description', block, recordMap) || config.description
 
   return (
     <>
