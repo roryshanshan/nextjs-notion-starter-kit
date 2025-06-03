@@ -1,9 +1,3 @@
-import { pdfjs } from 'react-pdf'
-
-// 设置 pdf.js 的 worker 路径
-pdfjs.GlobalWorkerOptions.workerSrc =
-  'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.4.168/legacy/build/pdf.worker.min.js'
-
 import cs from 'classnames'
 import dynamic from 'next/dynamic'
 import Image from 'next/legacy/image'
