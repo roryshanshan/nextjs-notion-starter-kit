@@ -1,3 +1,4 @@
+import { Pdf } from './Pdf'
 import cs from 'classnames'
 import dynamic from 'next/dynamic'
 import Image from 'next/legacy/image'
@@ -83,7 +84,7 @@ const Collection = dynamic(() =>
 const Equation = dynamic(() =>
   import('react-notion-x/build/third-party/equation').then((m) => m.Equation)
 )
-import { Pdf } from './Pdf'
+
 const Modal = dynamic(
   () =>
     import('react-notion-x/build/third-party/modal').then((m) => {
