@@ -1,34 +1,27 @@
-// React & Next 核心库
-import React from 'react'
-import { useRouter } from 'next/router'
+import cs from 'classnames'
 import dynamic from 'next/dynamic'
 import Image from 'next/legacy/image'
 import Link from 'next/link'
-
-// 外部工具库
-import cs from 'classnames'
+import { useRouter } from 'next/router'
+import { type PageBlock } from 'notion-types'
 import { formatDate, getBlockTitle, getPageProperty } from 'notion-utils'
+import * as React from 'react'
+import BodyClassName from 'react-body-classname'
+import {
+  type NotionComponents,
+  NotionRenderer,
+  useNotionContext
+} from 'react-notion-x'
+import { EmbeddedTweet, TweetNotFound, TweetSkeleton } from 'react-tweet'
 import { useSearchParam } from 'react-use'
 
-// Notion 渲染
-import {
-  NotionRenderer,
-  useNotionContext,
-  type NotionComponents
-} from 'react-notion-x'
-
-// 第三方组件
-import { EmbeddedTweet, TweetNotFound, TweetSkeleton } from 'react-tweet'
-
-// 项目内工具方法，注意用 `import type` 声明类型
-import * as config from '@/lib/config'
 import type * as types from '@/lib/types'
+import * as config from '@/lib/config'
 import { mapImageUrl } from '@/lib/map-image-url'
 import { getCanonicalPageUrl, mapPageUrl } from '@/lib/map-page-url'
 import { searchNotion } from '@/lib/search-notion'
 import { useDarkMode } from '@/lib/use-dark-mode'
 
-// 本地组件
 import { Footer } from './Footer'
 import { GitHubShareButton } from './GitHubShareButton'
 import { Loading } from './Loading'
@@ -36,12 +29,6 @@ import { NotionPageHeader } from './NotionPageHeader'
 import { Page404 } from './Page404'
 import { PageAside } from './PageAside'
 import { PageHead } from './PageHead'
-import { Pdf } from './Pdf'
-
-// 类型导入（非值，只做类型用）
-import type { PageBlock } from 'notion-types'
-
-// 样式
 import styles from './styles.module.css'
 
 // -----------------------------------------------------------------------------
@@ -50,6 +37,7 @@ import styles from './styles.module.css'
 
 const Code = dynamic(() =>
   import('react-notion-x/build/third-party/code').then(async (m) => {
+    // add / remove any prism syntaxes here
     await Promise.allSettled([
       import('prismjs/components/prism-markup-templating.js'),
       import('prismjs/components/prism-markup.js'),
@@ -88,17 +76,28 @@ const Code = dynamic(() =>
 )
 
 const Collection = dynamic(() =>
-  import('react-notion-x/build/third-party/collection').then((m) => m.Collection)
+  import('react-notion-x/build/third-party/collection').then(
+    (m) => m.Collection
+  )
 )
 const Equation = dynamic(() =>
   import('react-notion-x/build/third-party/equation').then((m) => m.Equation)
 )
-const Modal = dynamic(() =>
-  import('react-notion-x/build/third-party/modal').then((m) => {
-    m.Modal.setAppElement('.notion-viewport')
-    return m.Modal
-  }),
-  { ssr: false }
+const Pdf = dynamic(
+  () => import('react-notion-x/build/third-party/pdf').then((m) => m.Pdf),
+  {
+    ssr: false
+  }
+)
+const Modal = dynamic(
+  () =>
+    import('react-notion-x/build/third-party/modal').then((m) => {
+      m.Modal.setAppElement('.notion-viewport')
+      return m.Modal
+    }),
+  {
+    ssr: false
+  }
 )
 
 function Tweet({ id }: { id: string }) {
@@ -117,10 +116,11 @@ const propertyLastEditedTimeValue = (
   defaultFn: () => React.ReactNode
 ) => {
   if (pageHeader && block?.last_edited_time) {
-    return `Last updated ${formatDate(block?.last_edited_time, {
+    return Last updated ${formatDate(block?.last_edited_time, {
       month: 'long'
-    })}`
+    })}
   }
+
   return defaultFn()
 }
 
@@ -130,12 +130,14 @@ const propertyDateValue = (
 ) => {
   if (pageHeader && schema?.name?.toLowerCase() === 'published') {
     const publishDate = data?.[0]?.[1]?.[0]?.[1]?.start_date
+
     if (publishDate) {
-      return `${formatDate(publishDate, {
+      return ${formatDate(publishDate, {
         month: 'long'
-      })}`
+      })}
     }
   }
+
   return defaultFn()
 }
 
@@ -146,6 +148,7 @@ const propertyTextValue = (
   if (pageHeader && schema?.name?.toLowerCase() === 'author') {
     return <b>{defaultFn()}</b>
   }
+
   return defaultFn()
 }
 
@@ -176,18 +179,26 @@ export function NotionPage({
     []
   )
 
+  // lite mode is for oembed
   const isLiteMode = lite === 'true'
+
   const { isDarkMode } = useDarkMode()
 
   const siteMapPageUrl = React.useMemo(() => {
     const params: any = {}
     if (lite) params.lite = lite
-    return mapPageUrl(site, recordMap, new URLSearchParams(params))
+
+    const searchParams = new URLSearchParams(params)
+    return mapPageUrl(site, recordMap, searchParams)
   }, [site, recordMap, lite])
 
   const keys = Object.keys(recordMap?.block || {})
   const block = recordMap?.block?.[keys[0]]?.value
-  const isBlogPost = block?.type === 'page' && block?.parent_table === 'collection'
+
+  // const isRootPage =
+  //   parsePageId(block?.id) === parsePageId(site?.rootNotionPageId)
+  const isBlogPost =
+    block?.type === 'page' && block?.parent_table === 'collection'
 
   const showTableOfContents = !!isBlogPost
   const minTableOfContentsItems = 3
@@ -201,19 +212,45 @@ export function NotionPage({
 
   const footer = React.useMemo(() => <Footer />, [])
 
-  if (router.isFallback) return <Loading />
-  if (error || !site || !block) return <Page404 site={site} pageId={pageId} error={error} />
+  if (router.isFallback) {
+    return <Loading />
+  }
+
+  if (error || !site || !block) {
+    return <Page404 site={site} pageId={pageId} error={error} />
+  }
 
   const title = getBlockTitle(block, recordMap) || site.name
-  const canonicalPageUrl = !config.isDev && getCanonicalPageUrl(site, recordMap)(pageId)
+
+  console.log('notion page', {
+    isDev: config.isDev,
+    title,
+    pageId,
+    rootNotionPageId: site.rootNotionPageId,
+    recordMap
+  })
+
+  if (!config.isServer) {
+    // add important objects to the window global for easy debugging
+    const g = window as any
+    g.pageId = pageId
+    g.recordMap = recordMap
+    g.block = block
+  }
+
+  const canonicalPageUrl =
+    !config.isDev && getCanonicalPageUrl(site, recordMap)(pageId)
+
   const socialImage = mapImageUrl(
     getPageProperty<string>('Social Image', block, recordMap) ||
       (block as PageBlock).format?.page_cover ||
       config.defaultPageCover,
     block
   )
+
   const socialDescription =
-    getPageProperty<string>('Description', block, recordMap) || config.description
+    getPageProperty<string>('Description', block, recordMap) ||
+    config.description
 
   return (
     <>
