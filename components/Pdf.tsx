@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React from 'react'
 
 export const Pdf = ({ block }) => {
   const source = block?.format?.display_source
@@ -10,8 +10,9 @@ export const Pdf = ({ block }) => {
         src={source}
         width="100%"
         height="100%"
-        allowFullScreen
-        frameBorder="0"
+        style={{ border: 'none' }}
+        sandbox="allow-scripts allow-same-origin"
+        allow="fullscreen"
       />
     </div>
   )
