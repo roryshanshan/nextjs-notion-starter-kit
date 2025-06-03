@@ -1,27 +1,26 @@
-import BodyClassName from 'react-body-classname'
-// ✅ React & Next 核心库
+// React & Next 核心库
 import React from 'react'
 import { useRouter } from 'next/router'
 import dynamic from 'next/dynamic'
 import Image from 'next/legacy/image'
 import Link from 'next/link'
 
-// ✅ 外部工具库
+// 外部工具库
 import cs from 'classnames'
 import { formatDate, getBlockTitle, getPageProperty } from 'notion-utils'
 import { useSearchParam } from 'react-use'
 
-// ✅ Notion 渲染
+// Notion 渲染
 import {
   NotionRenderer,
   useNotionContext,
   type NotionComponents
 } from 'react-notion-x'
 
-// ✅ 第三方组件
+// 第三方组件
 import { EmbeddedTweet, TweetNotFound, TweetSkeleton } from 'react-tweet'
 
-// ✅ 项目内工具方法
+// 项目内工具方法，注意用 `import type` 声明类型
 import * as config from '@/lib/config'
 import type * as types from '@/lib/types'
 import { mapImageUrl } from '@/lib/map-image-url'
@@ -29,7 +28,7 @@ import { getCanonicalPageUrl, mapPageUrl } from '@/lib/map-page-url'
 import { searchNotion } from '@/lib/search-notion'
 import { useDarkMode } from '@/lib/use-dark-mode'
 
-// ✅ 本地组件
+// 本地组件
 import { Footer } from './Footer'
 import { GitHubShareButton } from './GitHubShareButton'
 import { Loading } from './Loading'
@@ -39,10 +38,10 @@ import { PageAside } from './PageAside'
 import { PageHead } from './PageHead'
 import { Pdf } from './Pdf'
 
-// ✅ 类型补充（解决 PageBlock 报错）
-import { PageBlock } from 'notion-types'
+// 类型导入（非值，只做类型用）
+import type { PageBlock } from 'notion-types'
 
-// ✅ 样式
+// 样式
 import styles from './styles.module.css'
 
 // -----------------------------------------------------------------------------
