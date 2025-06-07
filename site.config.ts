@@ -10,7 +10,7 @@ export default siteConfig({
   // basic site info (required)
   name: 'Gavin 星舱展示',
   author: 'Gavin Lee',
-  description: '这是由 Notion 驱动的星舱产品展示网站',
+  description: '星舱产品展示网站，各种移动房屋一站式基地，欢迎联系+8619906365856',
   domain: 'notion.mobilehouse.asia',
 
   // default notion icon and cover images for site-wide consistency (optional)
